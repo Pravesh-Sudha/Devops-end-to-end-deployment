@@ -1,21 +1,22 @@
-FROM ubuntu:latest
+FROM arm64v8/ubuntu:22.04
 
 MAINTAINER ybmsr <ybmadhu404@gmail.com>
 
 WORKDIR /usr/apps/hello-docker/
 
-RUN apt-get -y update
+# Update package list and install Node.js and npm
+RUN apt-get update && apt-get install -y nodejs npm && \
+    ln -s /usr/bin/nodejs /usr/bin/node  
 
-RUN apt-get install -y nodejs
-
-RUN apt-get install -y npm
-
-#RUN ln -s /usr/bin/nodejs /usr/bin/node........;;;;;
-
+# Install http-server globally
 RUN npm install -g http-server
 
-ADD . /usr/apps/hello-docker/
+# Copy application files
+COPY . /usr/apps/hello-docker/
+COPY index.html /usr/apps/hello-docker/index.html
 
-ADD index.html /usr/apps/hello-docker/index.html
+# Expose the desired port
+EXPOSE 8080
 
-CMD ["http-server", "-s"]
+# Run the http-server
+CMD ["http-server", "-p", "8080", "-s"]
